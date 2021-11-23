@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "backend"
+version = "0.0.0"
+description = ""
+authors = ["Nicholas Rawlings <norawlin@uncc.edu>"]
+packages = [
+	{ include = "lib" },
+	{ include = "scripts" }
+]
+
+[tool.poetry.dependencies]
+aiohttp = "^3.8.0"
+aiohttp_cors = "^0.7.0"
+aiohttp-sse = "^2.1.0"
+datasets = "^1.15.1"
+ekphrasis = "^0.5.1"
+emoji = "^1.6.1"
+flair = "^0.9"
+geopy = "^2.2.0"
+jsonschema = "^4.2.1"
+networkx = "^2.6.3"
+nltk = "^3.6.5"
+pandas = "^1.3.4"
+pyarrow = "^6.0.0"
+pyarrow-ops = "^0.0.8"
+python = "^3.9"
+rx = "^3.2.0"
+spacy = "^3.2.0"
+stanza = "^1.3.0"
+torch = "^1.10.0"
+transformers = "^4.12.3"
+vadersentiment = "^3.3.2"
+wrapt = "^1.13.3"
+
+[tool.poetry.dev-dependencies]
+black = "^21.10b0"
+pylint = "^2.11.1"
+termcolor = "^1.1.0"
+
+[tools.pylint.basic]
+good-names = ["T"]
+
+[tool.pylint.messages_control]
+max-line-length = 88
+disable = ["C0330", "C0326"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

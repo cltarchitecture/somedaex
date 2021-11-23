@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "johnsoncodehk.volar",
+    "ms-python.python"
+  ],
+  "unwantedRecommendations": [
+		"octref.vetur"
+	]
+}

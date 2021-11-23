@@ -1,0 +1,15 @@
+{
+  "files.exclude": {
+    "**/__pycache__": true,
+  },
+  "python.formatting.provider": "black",
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/backend/lib"
+  ],
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/backend/lib"
+  ],
+  "[python]": {
+    "editor.formatOnSave": true
+  }
+}

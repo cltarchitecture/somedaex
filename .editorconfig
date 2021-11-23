@@ -1,0 +1,25 @@
+# EditorConfig helps to ensure consistent indentation and
+# line endings across different editors and platforms.
+# https://EditorConfig.org
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = tab
+indent_size = 4
+trim_trailing_whitespace = true
+
+# PEP 8 recommends indenting with 4 spaces
+# https://www.python.org/dev/peps/pep-0008/
+[*.py]
+indent_style = space
+indent_size = 4
+
+# JavaScript Standard Style mandates 2 spaces for indentation
+# https://standardjs.com/rules
+[*.{js,json,ts,vue}]
+indent_style = space
+indent_size = 2
