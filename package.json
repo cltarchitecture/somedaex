@@ -11,7 +11,7 @@
   "scripts": {
     "backend:setup": "cd backend && poetry install",
     "backend:index": "cd backend && source .envrc && poetry run python scripts/build_index.py",
-    "backend:format": "cd backend && source .envrc && poetry run black",
+    "backend:format": "cd backend && source .envrc && poetry run black .",
     "backend:lint": "cd backend && source .envrc && poetry run pylint lib/*",
     "backend:run": "cd backend && source .envrc && poetry run python scripts/run_server.py -p 8080",
     "backend:teardown": "cd backend && poetry env remove 3.9",

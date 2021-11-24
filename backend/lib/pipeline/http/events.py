@@ -1,10 +1,8 @@
 import asyncio
-from functools import partial
 from typing import Any
 
 from aiohttp.web import Request
 from aiohttp_sse import sse_response
-
 import rx
 import rx.operators
 from rx.core.notification import OnNext, OnError
@@ -34,34 +32,35 @@ async def to_async_generator(
     observable: rx.Observable,
     loop: asyncio.AbstractEventLoop = None,
 ):
+    """Create an async generator that yields the values emitted by an observable."""
     queue = asyncio.Queue()
 
     if loop is None:
         loop = asyncio.get_event_loop()
 
-    def on_next(i):
-        queue.put_nowait(i)
+    def on_next(notification):
+        queue.put_nowait(notification)
 
     disposable = observable.pipe(rx.operators.materialize()).subscribe(
         on_next=on_next, scheduler=AsyncIOScheduler(loop=loop)
     )
 
     while True:
-        i = await queue.get()
-        if isinstance(i, OnNext):
-            yield i.value
+        notification = await queue.get()
+        if isinstance(notification, OnNext):
+            yield notification.value
             queue.task_done()
-        elif isinstance(i, OnError):
+        elif isinstance(notification, OnError):
             disposable.dispose()
-            print("Exception", i)
-            raise (Exception(i.value))
+            raise Exception(notification.value)
         else:
             disposable.dispose()
             break
 
 
 class EventStream:
-    """Produces server-sent events"""
+    """An EventStream listens for notifications from tasks and broadcasts them
+    as server-sent events."""
 
     def __init__(self):
         self.subscribers = set()
@@ -81,6 +80,7 @@ class EventStream:
                 self.subscribers.remove(queue)
 
     async def broadcast(self, payload: Any):
+        """Enqueue a message for broadcast."""
         for queue in self.subscribers:
             await queue.put(payload)
 
@@ -92,6 +92,7 @@ class EventStream:
                 print(err)
 
     def watch(self, task: Task):
+        """Collect notifications from a task."""
         streams = [
             observe(task.status).pipe(
                 rx.operators.distinct_until_changed(),
@@ -99,12 +100,10 @@ class EventStream:
             ),
             task.reset.pipe(map_reset(task)),
             observe(task.config).pipe(
-                # rx.operators.skip(1),
                 rx.operators.distinct_until_changed(),
                 to_task_event(task, "config"),
             ),
             observe(task.schema).pipe(
-                # rx.operators.skip(1),
                 rx.operators.distinct_until_changed(),
                 to_task_event(task, "schema"),
             ),
@@ -119,10 +118,10 @@ class EventStream:
             )
 
         watcher = rx.merge(*streams)
-        # asyncio.create_task(self.broadcast_from(watcher))
         self.watchers[task.id] = watcher.subscribe(async_on_next(self.broadcast))
 
     def unwatch(self, task: Task):
+        """Stop collecting notifications from a task."""
         self.watchers[task.id].dispose()
         del self.watchers[task.id]
 

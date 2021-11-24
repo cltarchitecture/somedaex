@@ -1,7 +1,7 @@
 # Standard library imports
 from abc import abstractmethod
 from pathlib import Path
-from typing import Iterable, Iterator, Union
+from typing import Iterable, Iterator
 
 # Third-party library imports
 from datasets.table import ConcatenationTable
@@ -18,7 +18,7 @@ from arrow_util import (
 from .monadic import MonadicTask
 from .results import ResultsBuffer
 from .status import Status
-from .task import Task, RowIterator
+from .task import RowIterator
 
 
 MAX_BUFFERED_RESULT_ROWS = 1000
@@ -44,10 +44,11 @@ class RowwiseTask(MonadicTask):
     @property
     def output_path(self) -> Path:
         """Get the path to the task's streaming output file."""
-        return self.workdir / "{}.arrows".format(self.id)
+        return self._workdir / f"{self.id}.arrows"
 
     def stream_path(self) -> Path:
-        return self.workdir / "{}.arrows".format(self.id)
+        """Get the path to the task's streaming output file."""
+        return self._workdir / f"{self.id}.arrows"
 
     def output_row(self, *values):
         """Write a single row to the task's output buffer."""
@@ -61,10 +62,12 @@ class RowwiseTask(MonadicTask):
             self.flush_output_buffer()
 
     def flush_output_buffer(self):
+        """Write the contents of the output buffer to the streaming output file."""
         batch = self._output_buffer.flush()
         self.output_batch(batch)
 
     def output_batch(self, batch):
+        """Write a record batch to the streaming output file."""
         if self._schema is None:
             raise Exception("Unable to write because there is no schema")
 
@@ -74,20 +77,9 @@ class RowwiseTask(MonadicTask):
         self._output_writer.write(batch)
         self._num_output_rows_written += batch.num_rows
 
-    # def schema(self) -> pyarrow.Schema:
-    #     """The schema of the results produced by the task."""
-    #     return self._schema
-
-    # def _set_schema(self, new_schema):
-    #     self.reset()
-    #     self._schema = new_schema
-    #     self._output_buffer = ResultsBuffer(new_schema)
-    #     self._output_writer = ArrowStreamWriter(self.output_path, new_schema)
-
-    # @SubscribableMethod
-    def on_reset(self, *args):
-        """Reset the task's processing state due to a change in its input or configuration."""
-        super().on_reset()
+    def on_reset(self, reason):
+        """Reset the task's state due to a change in its input or configuration."""
+        super().on_reset(reason)
         self._output_buffer = None
         self._output_writer = None
         self._num_input_rows_processed = 0
@@ -108,8 +100,8 @@ class RowwiseTask(MonadicTask):
         try:
             self.status = Status.WORKING
 
-            input = await self._input_rows.__anext__()
-            raw_result = self.execute(*input)
+            row = await self._input_rows.__anext__()
+            raw_result = self.execute(*row)
             self._num_input_rows_processed += 1
 
             if isinstance(raw_result, Iterator):
@@ -153,6 +145,7 @@ class OneToManyRowwiseTask(RowwiseTask):
 
 
 async def emptyTupler():
+    """A generator that yields empty tuples forever."""
     while True:
         yield ()
 
@@ -169,8 +162,8 @@ class RowwiseResultsIterator(RowIterator):
         self._source_column_names = None
         self._own_column_names = None
 
-    def on_reset(self, *args):
-        super().on_reset()
+    def on_reset(self, reason):
+        super().on_reset(reason)
         self._current_batch = None
         self._source_rows = None
         self._source_column_names = None
@@ -213,7 +206,7 @@ class RowwiseResultsIterator(RowIterator):
         while self._index >= self._task._num_output_rows_buffered:
             await self._task.run()
 
-        # If we already have an iterator for a RecordBatch, attempt to read a row from it
+        # If we already have a RecordBatch iterator, attempt to read a row from it
         if self._current_batch:
             row = self._from_current_batch()
             if row is not None:
@@ -237,9 +230,8 @@ class RowwiseResultsIterator(RowIterator):
             row = self._from_current_batch()
             return await self._add_source_columns(row)
 
-        else:
-            row = self._from_buffer()
-            return await self._add_source_columns(row)
+        row = self._from_buffer()
+        return await self._add_source_columns(row)
 
     async def _setup_source_row_iterator(self):
         if self._column_names is None:

@@ -1,9 +1,10 @@
 import asyncio
+import inspect
 
 from aiohttp import web
 import aiohttp_cors
 import rx.operators
-from wrapt import decorator
+import wrapt
 
 from observableproxy import observe
 from pipeline import Pipeline
@@ -13,17 +14,29 @@ from .encoder import to_json
 from .events import EventStream
 
 
-def task_handler(method):
-    async def wrapper(self, request):
-        task_id = int(request.match_info["id"])
-        try:
-            task = self.pipeline[task_id]
-        except KeyError:
-            return web.Response(status=404)
+ROUTE_PARAMS_ATTR = "_route_params"
 
-        return await method(self, request, task)
 
-    return wrapper
+def route_params(method: str, path: str):
+    """Add routing information to a method."""
+
+    def decorator(fn):
+        setattr(fn, ROUTE_PARAMS_ATTR, (method, path))
+        return fn
+
+    return decorator
+
+
+@wrapt.decorator
+async def task_handler(wrapped, instance, args, kwargs):
+    request = args[0]
+    task_id = int(request.match_info["id"])
+    try:
+        kwargs["task"] = instance.pipeline[task_id]
+    except KeyError:
+        return web.Response(status=404)
+
+    return await wrapped(*args, **kwargs)
 
 
 class Provocateur:
@@ -82,31 +95,17 @@ class Server:
             },
         )
 
-        self.define_endpoint(
-            "/",
-            {
-                "GET": self.get_pipeline,
-                "POST": self.add_task,
-            },
-        )
-
-        self.define_endpoint(
-            r"/{id:\d+}",
-            {
-                "GET": self.get_task,
-                "POST": self.update_task,
-                "DELETE": self.delete_task,
-            },
-        )
-
-    def define_endpoint(self, path, handlers):
-        endpoint = self.cors.add(self.app.router.add_resource(path))
-        for method in handlers:
-            self.cors.add(endpoint.add_route(method, handlers[method]))
+        # Look for methods with route information and add them to the routing table
+        for name in dir(self):
+            attr = getattr(self, name)
+            if inspect.ismethod(attr) and hasattr(attr, ROUTE_PARAMS_ATTR):
+                method, path = getattr(attr, ROUTE_PARAMS_ATTR)
+                self.cors.add(self.app.router.add_route(method, path, attr))
 
     def listen(self, port):
         web.run_app(self.app, port=port)
 
+    @route_params("GET", "/")
     async def get_pipeline(self, request):
         if request.headers.get("accept") == "text/event-stream":
             await self.events.subscribe(request)
@@ -115,6 +114,7 @@ class Server:
             tasks = [t.args() for t in self.pipeline]
             return web.json_response({"tasks": tasks}, dumps=to_json)
 
+    @route_params("POST", "/")
     async def add_task(self, request):
         body = await request.json()
         type = body.pop("type")
@@ -136,11 +136,13 @@ class Server:
             return web.Response(status=400, text=str(err))
 
     @task_handler
+    @route_params("GET", r"/{id:\d+}")
     async def get_task(self, _, task):
         return web.json_response(task.args(), dumps=to_json)
 
     @task_handler
-    async def update_task(self, request, task):
+    @route_params("POST", r"/{id:\d+}")
+    async def update_task(self, request: web.Request, task: Task):
         body = await request.json()
         print(f"Updating task {task.id} with {body}")
 
@@ -161,6 +163,7 @@ class Server:
         #     return web.Response(status=400, text=str(err))
 
     @task_handler
+    @route_params("DELETE", r"/{id:\d+}")
     async def delete_task(self, _, task):
         self.pipeline.remove_task(task.id)
         await self.events.broadcast({"event": "deleted", "task": task.id})

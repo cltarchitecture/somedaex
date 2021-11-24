@@ -9,16 +9,20 @@ class ResultsBuffer:
         self._columns = [[] for _ in schema]
 
     def append(self, *values):
+        """Append a row to the buffer."""
         for column, value in zip(self._columns, values):
             column.append(value)
 
     def to_batch(self) -> pyarrow.RecordBatch:
+        """Create a PyArrow RecordBatch from the contents of the buffer."""
         return pyarrow.record_batch(self._columns, schema=self._schema)
 
     def clear(self):
+        """Empty the buffer."""
         self._columns = [[] for _ in self._schema]
 
     def flush(self) -> pyarrow.RecordBatch:
+        """Empty the buffer and return its former contents as a RecordBatch."""
         batch = self.to_batch()
         self.clear()
         return batch
@@ -28,7 +32,3 @@ class ResultsBuffer:
 
     def __getitem__(self, index):
         return tuple(column[index] for column in self._columns)
-
-
-class Results:
-    pass

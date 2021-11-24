@@ -1,3 +1,6 @@
+"""The monadic module defines MonadicTask, the base class for all tasks that
+process data from exactly one source."""
+
 from abc import abstractmethod
 from typing import Union
 
@@ -60,18 +63,20 @@ class MonadicTask(Task):
 
         return self.validate_column_name(self.column)
 
-    def validate_column_name(self, name) -> bool:
+    def validate_column_name(self, name: str) -> bool:
+        """Verify that the given name references a column in the source schema."""
         if not isinstance(name, str):
             return False
 
         source_schema = self.source.schema
-        print(source_schema)
         if not isinstance(source_schema, pyarrow.Schema):
             return False
 
         return name in source_schema.names
 
-    def on_source_change(self, new_source):
+    def on_source_change(self, new_source: Union[Task, None]):
+        """When the task's source changes, stop watching for reset events from
+        the old source and begin watching for them from the new source."""
         if self._source_reset_subscription is not None:
             self._source_reset_subscription.dispose()
             self._source_reset_subscription = None
@@ -79,9 +84,10 @@ class MonadicTask(Task):
         if new_source is not None:
             self._source_reset_subscription = new_source.reset.subscribe(self.reset)
 
-        self.reset.emit()
+        self.reset.on_next("Source changed")
 
     def on_ready(self, _):
+        """When the task becomes "ready", generate its schema."""
         self.schema = self.get_schema()
 
     @abstractmethod

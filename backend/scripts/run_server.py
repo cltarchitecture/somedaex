@@ -5,7 +5,7 @@ from task_types import task_types
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-p', '--port', help="Port number to listen on")
+parser.add_argument("-p", "--port", help="Port number to listen on")
 args = parser.parse_args()
 
 pipeline = Pipeline(task_types)

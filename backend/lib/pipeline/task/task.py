@@ -1,3 +1,5 @@
+"""The task module defines Task, the abstract base class for all tasks."""
+
 # Standard library imports
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -6,11 +8,11 @@ from typing import Any, List, Mapping, Union
 # Third-party library imports
 from datasets.table import Table
 import rx.operators
+from rx.subject import Subject
 
 # Local imports
 from arrow_util import MemoryMappedTableReader, get_row
 from observableproxy import ObservableProperty, observe
-from .observable import ObservableEvent
 from .status import Status
 
 
@@ -28,7 +30,7 @@ class Task(ABC):
         self.config = config
         self.schema = None
 
-        self.reset = ObservableEvent()
+        self.reset = Subject()
 
         self._table: Table = None
         """A table containing the full set of results output by the task."""
@@ -82,8 +84,8 @@ class Task(ABC):
 
         return self._table
 
-    def on_reset(self, *args):
-        """Reset the task's processing state due to a change in its input or configuration."""
+    def on_reset(self, _):
+        """Reset the task's state due to a change in its input or configuration."""
         self._table = None
         self.schema = None
 
@@ -98,7 +100,7 @@ class Task(ABC):
 
     def file_path(self) -> Path:
         """Get the path to the Arrow file containing the task's results."""
-        return self._workdir / "{}.arrow".format(self.id)
+        return self._workdir / f"{self.id}.arrow"
 
     @abstractmethod
     def _get_full_table(self) -> Table:
@@ -141,7 +143,7 @@ class RowIterator:
     def __del__(self):
         self._task_reset_subscription.dispose()
 
-    def on_reset(self, *args):
+    def on_reset(self, _):
         self._index = 0
 
     def __aiter__(self):
@@ -165,5 +167,5 @@ class RowIterator:
         self._index += 1
         return row
 
-    def skip(self, n):
-        self._index += n
+    def skip(self, num: int):
+        self._index += num

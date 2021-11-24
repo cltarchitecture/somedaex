@@ -1,6 +1,7 @@
-from .task import Task
-from .rowwise import RowwiseTask, OneToOneRowwiseTask
-from .niladic import NiladicTask
-from .status import Status
-from .exceptions import TaskNotComplete
+"""The task package provides base classes for defining tasks."""
+
 from .monadic import MonadicTask
+from .niladic import NiladicTask
+from .rowwise import OneToOneRowwiseTask, RowwiseTask
+from .status import Status
+from .task import Task

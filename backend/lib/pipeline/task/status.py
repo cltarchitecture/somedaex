@@ -2,6 +2,7 @@ from enum import auto, Enum
 
 
 class Status(Enum):
+    """A status describes the position of a task within its lifecycle."""
 
     INVALID = auto()
     """The task does not yet have a valid configuration and cannot process rows."""
@@ -29,4 +30,5 @@ class Status(Enum):
 
     @classmethod
     def from_string(cls, string):
+        """Retrieve the status object that corresponds to the given string."""
         return getattr(cls, string.upper())

@@ -1,3 +1,6 @@
+"""The niladic module defines NiladicTask, the base class for all tasks that
+do not process data from any other task."""
+
 from .task import Task
 
 
