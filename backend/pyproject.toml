@@ -37,8 +37,8 @@ black = "^21.10b0"
 pylint = "^2.11.1"
 termcolor = "^1.1.0"
 
-[tools.pylint.basic]
-good-names = ["T"]
+[tool.pylint.basic]
+good-names = ["id", "T"]
 
 [tool.pylint.messages_control]
 max-line-length = 88
