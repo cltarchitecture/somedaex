@@ -96,11 +96,14 @@ class Server:
         )
 
         # Look for methods with route information and add them to the routing table
+        http_resources = {}
         for name in dir(self):
             attr = getattr(self, name)
             if inspect.ismethod(attr) and hasattr(attr, ROUTE_PARAMS_ATTR):
                 method, path = getattr(attr, ROUTE_PARAMS_ATTR)
-                self.cors.add(self.app.router.add_route(method, path, attr))
+                if path not in http_resources:
+                    http_resources[path] = self.app.router.add_resource(path)
+                self.cors.add(http_resources[path].add_route(method, attr))
 
     def listen(self, port):
         web.run_app(self.app, port=port)
