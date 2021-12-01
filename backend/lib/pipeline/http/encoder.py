@@ -19,7 +19,9 @@ class JSONEncoder(json.JSONEncoder):
 
     @singledispatchmethod
     def default(self, o):
-        return o
+        if isinstance(o, ObservableProxy):
+            return JSONEncoder.observable_proxy(o)
+        raise NotImplementedError(f"Unable to encode object of type {type(o)}")
 
     @default.register
     @staticmethod
@@ -58,7 +60,6 @@ class JSONEncoder(json.JSONEncoder):
         """Return the string representation of a task status."""
         return str(status)
 
-    @default.register
     @staticmethod
     def observable_proxy(value: ObservableProxy):
         """Return the wrapped value of an ObservableProxy."""
