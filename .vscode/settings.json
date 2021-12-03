@@ -2,14 +2,24 @@
   "files.exclude": {
     "**/__pycache__": true,
   },
-  "python.formatting.provider": "black",
-  "python.autoComplete.extraPaths": [
-    "${workspaceFolder}/backend/lib"
-  ],
   "python.analysis.extraPaths": [
     "${workspaceFolder}/backend/lib"
   ],
+  "python.autoComplete.extraPaths": [
+    "${workspaceFolder}/backend/lib"
+  ],
+  "python.formatting.provider": "black",
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
   "[python]": {
     "editor.formatOnSave": true
-  }
+  },
+  "standard.enable": true,
+  "standard.engine": "ts-standard",
+  "standard.autoFixOnSave": true,
+  "standard.validate": ["javascript", "typescript"],
+  "standard.workingDirectories": [
+    "${workspaceFolder}/main",
+    "${workspaceFolder}/renderer"
+  ]
 }

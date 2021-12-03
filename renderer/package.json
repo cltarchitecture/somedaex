@@ -1,0 +1,40 @@
+{
+  "name": "somedaex-renderer",
+  "version": "0.0.1",
+  "description": "An app for exploratory analysis and visualization of social media data.",
+  "license": "UNLICENSED",
+  "private": true,
+  "author": {
+    "name": "Nicholas Rawlings",
+    "email": "norawlin@uncc.edu"
+  },
+  "scripts": {
+    "build": "webpack",
+    "standard": "ts-standard --fix",
+    "start": "webpack serve"
+  },
+  "dependencies": {
+    "@apache-arrow/esnext-cjs": "^6.0.0",
+    "electron": "^15.3.0",
+    "material-design-icons": "^3.0.1",
+    "vue": "^3.2.21"
+  },
+  "devDependencies": {
+    "css-loader": "^6.5.1",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.4.4",
+    "style-loader": "^3.3.1",
+    "ts-loader": "^9.2.6",
+    "ts-standard": "^11.0.0",
+    "typescript": "^4.4.4",
+    "vue-loader": "^16.8.3",
+    "webpack": "^5.64.4",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.4.0"
+  },
+  "ts-standard": {
+    "ignore": [
+      "build/*"
+    ]
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "somedaex-main",
+  "version": "0.0.1",
+  "description": "An app for exploratory analysis and visualization of social media data.",
+  "license": "UNLICENSED",
+  "private": true,
+  "author": {
+    "name": "Nicholas Rawlings",
+    "email": "norawlin@uncc.edu"
+  },
+  "scripts": {
+    "build": "node scripts/esbuild.js",
+    "postinstall": "electron-rebuild",
+    "standard": "ts-standard --fix",
+    "typecheck": "tsc --noEmit",
+    "start": "electron build/main.js"
+  },
+  "dependencies": {
+    "@apache-arrow/esnext-cjs": "^6.0.0",
+    "@raygun-nickj/mmap-io": "^1.3.0",
+    "chokidar": "^3.5.2",
+    "electron": "^15.3.0",
+    "merge-anything": "^4.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.6",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-rebuild": "^3.2.3",
+    "esbuild": "^0.13.12",
+    "ts-standard": "^11.0.0",
+    "typescript": "^4.4.4"
+  },
+  "ts-standard": {
+    "ignore": [
+      "build/*"
+    ]
+  }
+}

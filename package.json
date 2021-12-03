@@ -1,57 +1,7 @@
 {
   "name": "somedaex",
-  "version": "0.0.1",
-  "description": "An app for exploratory analysis and visualization of social media data.",
-  "license": "UNLICENSED",
-  "private": true,
-  "author": {
-    "name": "Nicholas Rawlings",
-    "email": "norawlin@uncc.edu"
-  },
-  "scripts": {
-    "backend:setup": "cd backend && poetry install",
-    "backend:index": "cd backend && source .envrc && poetry run python scripts/build_index.py",
-    "backend:format": "cd backend && source .envrc && poetry run black .",
-    "backend:lint": "cd backend && source .envrc && poetry run pylint lib/*",
-    "backend:run": "cd backend && source .envrc && poetry run python scripts/run_server.py -p 8080",
-    "backend:teardown": "cd backend && poetry env remove 3.9",
-    "main:build": "node main/scripts/esbuild.js",
-    "main:check": "tsc --noEmit -p main/tsconfig.json",
-    "main:standard": "cd main && ts-standard --fix",
-    "main:run": "electron main/build/main.js",
-    "renderer:build": "webpack --config renderer/webpack.config.js",
-    "renderer:standard": "cd renderer && ts-standard --fix",
-    "renderer:run": "webpack serve --config renderer/webpack.config.js"
-  },
-  "dependencies": {
-    "@apache-arrow/esnext-cjs": "^6.0.0",
-    "@raygun-nickj/mmap-io": "^1.3.0",
-    "chokidar": "^3.5.2",
-    "material-design-icons": "^3.0.1",
-    "merge-anything": "^4.0.1",
-    "vue": "^3.2.21"
-  },
-  "devDependencies": {
-    "@types/node": "^16.11.6",
-    "css-loader": "^6.5.1",
-    "electron": "^15.3.0",
-    "electron-devtools-installer": "^3.2.0",
-    "electron-rebuild": "^3.2.3",
-    "esbuild": "^0.13.12",
-    "html-webpack-plugin": "^5.5.0",
-    "mini-css-extract-plugin": "^2.4.4",
-    "style-loader": "^3.3.1",
-    "ts-loader": "^9.2.6",
-    "ts-standard": "^11.0.0",
-    "typescript": "^4.4.4",
-    "vue-loader": "^16.8.3",
-    "webpack": "^5.64.4",
-    "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.4.0"
-  },
-  "ts-standard": {
-    "ignore": [
-      "**/build/*.js"
-    ]
-  }
+  "workspaces": [
+    "main",
+    "renderer"
+  ]
 }

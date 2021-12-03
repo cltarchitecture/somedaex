@@ -5,14 +5,14 @@ const esbuild = require('esbuild')
  */
 const config = {
   entryPoints: [
-    'main/src/main.ts',
-    'main/src/preload.ts'
+    'src/main.ts',
+    'src/preload.ts'
   ],
   bundle: true,
-  outdir: 'main/build',
+  outdir: 'build',
   platform: 'node',
   external: ['@raygun-nickj/mmap-io', 'electron'],
-  tsconfig: 'main/tsconfig.json'
+  tsconfig: 'tsconfig.json'
 }
 
 esbuild.build(config).then((result) => {
