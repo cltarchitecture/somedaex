@@ -1,6 +1,6 @@
 from emoji import demojize, replace_emoji
 import pyarrow
-from pipeline.task import OneToOneRowwiseTask
+from ..pipeline.task import OneToOneRowwiseTask
 
 # class RemoveEmoji(OneToOneRowwiseTask):
 #     def execute(self, *text):

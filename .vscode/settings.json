@@ -2,17 +2,12 @@
   "files.exclude": {
     "**/__pycache__": true,
   },
-  "python.analysis.extraPaths": [
-    "${workspaceFolder}/backend/lib"
-  ],
-  "python.autoComplete.extraPaths": [
-    "${workspaceFolder}/backend/lib"
-  ],
   "python.formatting.provider": "black",
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
   "[python]": {
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "editor.rulers": [88]
   },
   "standard.enable": true,
   "standard.engine": "ts-standard",

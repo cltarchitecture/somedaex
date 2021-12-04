@@ -9,9 +9,9 @@ import pyarrow.csv
 import pyarrow.json
 import pyarrow.parquet
 
-from arrow_util import ArrowFileWriter
-from pipeline.task import NiladicTask, Status
-from observableproxy import observe
+from ..arrow_util import ArrowFileWriter
+from ..observableproxy import observe
+from ..pipeline.task import NiladicTask, Status
 
 
 VALID_FORMATS = ("arrow", "csv", "json", "parquet")

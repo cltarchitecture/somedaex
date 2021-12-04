@@ -6,10 +6,10 @@ import aiohttp_cors
 import rx.operators
 import wrapt
 
-from observableproxy import observe
-from pipeline import Pipeline
-from pipeline.index import NoSuchType
-from pipeline.task import Task, Status
+from somedaex.observableproxy import observe
+from somedaex.pipeline import Pipeline
+from somedaex.pipeline.index import NoSuchType
+from somedaex.pipeline.task import Task, Status
 from .encoder import to_json
 from .events import EventStream
 

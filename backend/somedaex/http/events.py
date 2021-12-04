@@ -8,8 +8,8 @@ import rx.operators
 from rx.core.notification import OnNext, OnError
 from rx.scheduler.eventloop import AsyncIOScheduler
 
-from observableproxy import observe
-from pipeline.task import Task, MonadicTask
+from ..observableproxy import observe
+from ..pipeline.task import Task, MonadicTask
 from .encoder import to_json
 
 

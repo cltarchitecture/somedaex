@@ -7,7 +7,7 @@ from typing import Union
 import pyarrow
 import rx.operators
 
-from observableproxy import observe, ObservableProperty
+from ...observableproxy import observe, ObservableProperty
 from .status import Status
 from .task import Task
 

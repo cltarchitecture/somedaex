@@ -1,7 +1,7 @@
 import argparse
-from pipeline import Pipeline
-from pipeline.http import Server
-from task_types import task_types
+from somedaex.http import Server
+from somedaex.pipeline import Pipeline
+from somedaex.task_types import task_types
 
 
 parser = argparse.ArgumentParser()

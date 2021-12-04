@@ -39,7 +39,7 @@ $ npm install
 To start the backend process:
 ```
 $ cd backend
-$ poetry run python scripts/run_server.py
+$ poetry run python run_server.py
 ```
 
 To start the Webpack dev server for the renderer process:

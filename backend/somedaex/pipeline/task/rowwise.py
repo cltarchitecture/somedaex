@@ -8,7 +8,7 @@ from datasets.table import ConcatenationTable
 import pyarrow
 
 # Local imports
-from arrow_util import (
+from ...arrow_util import (
     ArrowStreamReader,
     ArrowStreamWriter,
     copy_stream_to_file,

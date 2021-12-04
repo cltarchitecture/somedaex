@@ -11,8 +11,8 @@ import rx.operators
 from rx.subject import Subject
 
 # Local imports
-from arrow_util import MemoryMappedTableReader, get_row
-from observableproxy import ObservableProperty, observe
+from ...arrow_util import MemoryMappedTableReader, get_row
+from ...observableproxy import ObservableProperty, observe
 from .status import Status
 
 

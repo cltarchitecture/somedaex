@@ -9,8 +9,8 @@ import json
 import pandas
 import pyarrow
 
-from observableproxy import ObservableProxy
-from pipeline.task import Task, Status
+from ..observableproxy import ObservableProxy
+from ..pipeline.task import Task, Status
 
 
 class JSONEncoder(json.JSONEncoder):

@@ -2,7 +2,7 @@
 """
 
 import pyarrow
-from pipeline.task import OneToOneRowwiseTask
+from ..pipeline.task import OneToOneRowwiseTask
 
 
 class CaseFold(OneToOneRowwiseTask):

@@ -3,9 +3,9 @@ index that maps those implementations to their string identifiers used elsewhere
 in the app.
 """
 
-from pipeline import TypeIndex
-from task_types.casefold import CaseFold
-from task_types.loadfile import LoadFile
+from ..pipeline import TypeIndex
+from .casefold import CaseFold
+from .loadfile import LoadFile
 
 task_types = TypeIndex()
 task_types.add(CaseFold)
