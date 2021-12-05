@@ -12,11 +12,11 @@ from .task import Task
 class Pipeline(Mapping):
     """A pipeline is a directed acyclic graph of tasks."""
 
-    def __init__(self, index: TypeIndex):
+    def __init__(self, index: TypeIndex, workdir: Path):
         self._tasks = {}
         self._types = index
         self._counter = 0
-        self._workdir = Path("/Users/Nicholas/Code/smav/sample_data/workdir")
+        self._workdir = workdir
 
     def _get_id(self):
         next_id = self._counter
