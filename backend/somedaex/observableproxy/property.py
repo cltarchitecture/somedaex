@@ -28,9 +28,10 @@ class ObservableProperty(Generic[T]):
         return getattr(obj, self.internal_name)
 
     def __set__(self, obj, value: T):
-        if hasattr(object, self.internal_name):
-            proxied_value = getattr(object, self.internal_name)
-            proxied_value.observable.on_next(value)
+        if hasattr(obj, self.internal_name):
+            proxied_value = getattr(obj, self.internal_name)
+            proxied_value.__wrapped__ = value
+            proxied_value.__observable__.on_next(value)
         else:
             proxied_value = self.proxy(value)
             setattr(obj, self.internal_name, proxied_value)
