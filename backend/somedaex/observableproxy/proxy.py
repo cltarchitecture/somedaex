@@ -4,7 +4,7 @@ import fractions
 from typing import Callable, TypeVar
 
 from rx.core.typing import Observable
-from rx.subject import BehaviorSubject
+from rx.subject import Subject
 import rx.operators
 import wrapt
 
@@ -66,7 +66,7 @@ class ObservableProxy(wrapt.ObjectProxy):
 
     def __init__(self, value):
         super().__init__(value)
-        self.__observable__ = BehaviorSubject(value)
+        self.__observable__ = Subject()
 
     def __del__(self):
         self.__observable__.dispose()
@@ -149,16 +149,20 @@ class observe(Observable[T]):
         """Return an observable sequence that terminates when the observed value
         satisfies the given predicate function.
 
-        The returned observable can be awaited to delay script execution util a
+        The returned observable can be awaited to delay script execution until a
         certain condition is met.
         """
+        if predicate(self.proxy.__wrapped__):
+            return rx.of(self.proxy.__wrapped__)
         return self.pipe(rx.operators.first(predicate))
 
     def equals(self, value: T) -> Observable[T]:
         """Return an observable sequence that terminates when the observed value
         equals the given test value.
 
-        The returned observable can be awaited to delay script execution util a
+        The returned observable can be awaited to delay script execution until a
         certain condition is met.
         """
+        if self.proxy.__wrapped__ == value:
+            return rx.of(self.proxy.__wrapped__)
         return self.pipe(rx.operators.first(lambda x: x == value))

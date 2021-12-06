@@ -45,11 +45,8 @@ class Task(ABC):
         self.reset.subscribe(self.on_reset)
 
     def __del__(self):
-        try:
-            if self._table_reader:
-                self._table_reader.close()
-        except:
-            pass
+        if hasattr(self, "_table_reader") and self._table_reader is not None:
+            self._table_reader.close()
 
     @classmethod
     @property
